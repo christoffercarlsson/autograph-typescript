@@ -8,7 +8,7 @@
   "exports": "./dist/index.js",
   "sideEffects": false,
   "dependencies": {
-    "stedy": "^0.9.4"
+    "stedy": "^0.10.0"
   },
   "devDependencies": {
     "@christoffercarlsson/eslint-config": "^0.6.0",
