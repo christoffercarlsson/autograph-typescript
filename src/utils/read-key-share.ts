@@ -1,9 +1,9 @@
-import { split } from 'stedy/chunk'
-import { PUBLIC_KEY_SIZE } from '../constants.js'
+import { createFrom, split } from 'stedy/chunk'
+import { PUBLIC_KEY_SIZE } from '../constants'
 
-const readKeyShare = (keyShare) => {
+const readKeyShare = (keyShare: BufferSource) => {
   const [signPublicKey, publicKey, ephemeralPublicKey] = split(
-    keyShare,
+    createFrom(keyShare),
     PUBLIC_KEY_SIZE
   )
   return { signPublicKey, publicKey, ephemeralPublicKey }
