@@ -1,6 +1,6 @@
 {
   "name": "@christoffercarlsson/autograph",
-  "version": "0.12.1",
+  "version": "0.13.0",
   "description": "A TypeScript implementation of the Autograph protocol",
   "license": "Unlicense",
   "repository": "git://github.com/christoffercarlsson/autograph-typescript.git",
