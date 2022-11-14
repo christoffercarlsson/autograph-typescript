@@ -45,7 +45,7 @@
     "test": "npm run build && rimraf coverage && NODE_OPTIONS='--experimental-vm-modules --no-warnings' npx jest --no-cache"
   },
   "dependencies": {
-    "stedy": "^0.11.1"
+    "stedy": "^0.12.1"
   },
   "sideEffects": false
 }

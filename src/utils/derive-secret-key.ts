@@ -1,4 +1,4 @@
-import { concat, createFrom } from 'stedy/chunk'
+import { concat, createFrom } from 'stedy/bytes'
 import { DiffieHellmanFunction } from '../create-diffie-hellman'
 import ephemeralDiffieHellman from '../crypto/diffie-hellman'
 import kdf from '../crypto/kdf'

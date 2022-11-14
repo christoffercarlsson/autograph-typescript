@@ -1,6 +1,6 @@
-import { partial } from 'stedy/util'
 import { CONTEXT_RESPONDER } from './constants'
 import { DiffieHellmanFunction } from './create-diffie-hellman'
+import partial from './utils/partial'
 import {
   createErrorResult,
   createResult,

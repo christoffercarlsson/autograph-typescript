@@ -1,4 +1,4 @@
-import { deriveSharedSecret } from 'stedy/crypto'
+import { diffieHellman as deriveSharedSecret } from 'stedy'
 import { DH_OUTPUT_SIZE } from '../constants'
 import { importPrivateKey, importPublicKey } from '../utils/import-key'
 

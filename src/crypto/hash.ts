@@ -1,6 +1,6 @@
-import { HASH_SHA512, hash as digest } from 'stedy/crypto'
+import { hash as digest } from 'stedy'
 
 const hash = (message: BufferSource, iterations: number) =>
-  digest(HASH_SHA512, message, iterations)
+  digest(message, iterations)
 
 export default hash

@@ -1,4 +1,4 @@
-import { createFrom, split } from 'stedy/chunk'
+import { createFrom, split } from 'stedy/bytes'
 import { PUBLIC_KEY_SIZE } from '../constants'
 
 const readKeyShare = (keyShare: BufferSource) => {

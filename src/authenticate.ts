@@ -1,10 +1,10 @@
-import { alloc, append, concat, createFrom, writeUint16BE } from 'stedy/chunk'
-import { partial } from 'stedy/util'
+import { alloc, append, concat, createFrom, writeUint16BE } from 'stedy/bytes'
 import { CONTEXT_INITIATOR, PUBLIC_KEY_SIZE, SIGNATURE_SIZE } from './constants'
 import type { DiffieHellmanFunction } from './create-diffie-hellman'
 import type { SignFunction } from './create-sign'
 import encrypt from './crypto/encrypt'
 import deriveSecretKey from './utils/derive-secret-key'
+import partial from './utils/partial'
 import readKeyShare from './utils/read-key-share'
 
 export type IdentifyFunction = (

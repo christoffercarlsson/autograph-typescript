@@ -1,9 +1,9 @@
-import { concat, createFrom } from 'stedy/chunk'
-import { partial } from 'stedy/util'
+import { concat, createFrom } from 'stedy/bytes'
 import { authenticate } from './authenticate'
 import { CONTEXT_INITIATOR, CONTEXT_RESPONDER } from './constants'
 import { DiffieHellmanFunction } from './create-diffie-hellman'
 import { SignFunction } from './create-sign'
+import partial from './utils/partial'
 import {
   createResult as createVerificationResult,
   VerificationResult,

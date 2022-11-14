@@ -1,8 +1,8 @@
-import { concat, createFrom } from 'stedy/chunk'
-import { partial } from 'stedy/util'
+import { concat, createFrom } from 'stedy/bytes'
 import { CONTEXT_RESPONDER } from './constants'
 import { DiffieHellmanFunction } from './create-diffie-hellman'
 import verifyData from './crypto/verify'
+import partial from './utils/partial'
 import readKeyShare from './utils/read-key-share'
 import {
   createErrorResult,

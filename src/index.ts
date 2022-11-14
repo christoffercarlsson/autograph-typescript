@@ -45,7 +45,7 @@ import {
   VerificationResult,
   VerifyOwnershipFunction
 } from './verify'
-import { createFrom } from 'stedy/chunk'
+import { createFrom } from 'stedy/bytes'
 
 export type Alice = {
   calculateSafetyNumber: CalculateSafetyNumberFunction

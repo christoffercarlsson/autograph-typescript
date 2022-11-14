@@ -1,13 +1,13 @@
-import { CURVE_CURVE25519, importKey } from 'stedy/crypto'
+import { importKey } from 'stedy'
 
 export const importPrivateKey = (key: BufferSource) =>
-  importKey(CURVE_CURVE25519, false, false, key)
+  importKey(key, false, false)
 
 export const importPrivateSignKey = (key: BufferSource) =>
-  importKey(CURVE_CURVE25519, true, false, key)
+  importKey(key, true, false)
 
 export const importPublicKey = (key: BufferSource) =>
-  importKey(CURVE_CURVE25519, false, true, key)
+  importKey(key, false, true)
 
 export const importPublicSignKey = (key: BufferSource) =>
-  importKey(CURVE_CURVE25519, true, true, key)
+  importKey(key, true, true)

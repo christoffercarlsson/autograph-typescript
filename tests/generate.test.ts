@@ -1,4 +1,4 @@
-import { concat, startsWith } from 'stedy/chunk'
+import { concat, startsWith } from 'stedy/bytes'
 import { generateKeyPair, generateKeyShare, generateSignKeyPair } from '../src'
 
 describe('Identity key pair and key share message generation', () => {

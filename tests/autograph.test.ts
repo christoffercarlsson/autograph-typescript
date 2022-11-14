@@ -1,4 +1,4 @@
-import { concat, createFrom } from 'stedy/chunk'
+import { concat, createFrom } from 'stedy/bytes'
 import {
   createDiffieHellman,
   createSign,

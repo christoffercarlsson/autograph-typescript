@@ -1,4 +1,4 @@
-import { verify as verifyMessage } from 'stedy/crypto'
+import { verify as verifyMessage } from 'stedy'
 import { importPublicSignKey } from '../utils/import-key'
 
 const verify = async (

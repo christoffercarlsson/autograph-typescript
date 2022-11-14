@@ -1,7 +1,7 @@
-import { concat, createFrom, split } from 'stedy/chunk'
-import { partial } from 'stedy/util'
+import { concat, createFrom, split } from 'stedy/bytes'
 import { SAFETY_NUMBER_DIVISOR, SAFETY_NUMBER_ITERATIONS } from './constants'
 import hash from './crypto/hash'
+import partial from './utils/partial'
 import readKeyShare from './utils/read-key-share'
 
 export type CalculateSafetyNumberFunction = (

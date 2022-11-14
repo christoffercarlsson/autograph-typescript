@@ -1,5 +1,5 @@
-import { partial } from 'stedy/util'
 import sign from './crypto/sign'
+import partial from './utils/partial'
 
 export type SignFunction = (message: BufferSource) => Promise<Uint8Array>
 

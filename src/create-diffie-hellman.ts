@@ -1,9 +1,9 @@
-import { partial } from 'stedy/util'
 import diffieHellman from './crypto/diffie-hellman'
+import partial from './utils/partial'
 
 export type DiffieHellmanFunction = (
   theirPublicKey: BufferSource
-) => Promise<BufferSource>
+) => Promise<Uint8Array>
 
 const createDiffieHellman = (ourPrivateKey: BufferSource) =>
   partial(diffieHellman, ourPrivateKey) as DiffieHellmanFunction

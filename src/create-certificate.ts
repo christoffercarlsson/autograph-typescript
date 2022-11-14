@@ -1,4 +1,4 @@
-import { concat, createFrom, ENCODING_BASE64_URLSAFE } from 'stedy/chunk'
+import { concat, createFrom, ENCODING_BASE64_URLSAFE } from 'stedy/bytes'
 
 export type CertificateEntry = {
   identityKey: string | BufferSource

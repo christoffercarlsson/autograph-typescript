@@ -5,8 +5,7 @@ import {
   read,
   readUint16BE,
   split
-} from 'stedy/chunk'
-import { partial } from 'stedy/util'
+} from 'stedy/bytes'
 import {
   CONTEXT_INITIATOR,
   CONTEXT_RESPONDER,
@@ -17,6 +16,7 @@ import { DiffieHellmanFunction } from './create-diffie-hellman'
 import decrypt from './crypto/decrypt'
 import verifyData from './crypto/verify'
 import deriveSecretKey from './utils/derive-secret-key'
+import partial from './utils/partial'
 import readKeyShare from './utils/read-key-share'
 
 export type VerificationResult = {

@@ -1,11 +1,10 @@
-import { createFrom, concat } from 'stedy/chunk'
+import { createFrom, concat } from 'stedy/bytes'
 import {
-  CURVE_CURVE25519,
   exportKey,
   generateKeyPair as generateKeys,
   generateSignKeyPair as generateSignKeys
-} from 'stedy/crypto'
-import { partial } from 'stedy/util'
+} from 'stedy'
+import partial from './utils/partial'
 
 export type KeyPair = {
   publicKey: Uint8Array
@@ -27,11 +26,10 @@ const exportKeyPair = async ({
   privateKey: await exportKey(privateKey)
 })
 
-export const generateKeyPair = async () =>
-  exportKeyPair(await generateKeys(CURVE_CURVE25519))
+export const generateKeyPair = async () => exportKeyPair(await generateKeys())
 
 export const generateSignKeyPair = async () =>
-  exportKeyPair(await generateSignKeys(CURVE_CURVE25519))
+  exportKeyPair(await generateSignKeys())
 
 export const generateKeyShare = async (
   ourSignPublicKey: BufferSource,
