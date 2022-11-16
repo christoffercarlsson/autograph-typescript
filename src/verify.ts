@@ -35,7 +35,10 @@ export type VerifyOwnershipFunction = (
 
 /* istanbul ignore next */
 const getError = (error: unknown) => {
-  if (error === null || error instanceof Error) {
+  if (error === undefined || error === null) {
+    return null
+  }
+  if (error instanceof Error) {
     return error
   }
   if (typeof error === 'string') {
@@ -47,13 +50,16 @@ const getError = (error: unknown) => {
 export const createResult = (
   identityKey?: Uint8Array,
   data?: Uint8Array,
-  error: unknown = null
-): VerificationResult => ({
-  data: data || null,
-  error: getError(error),
-  identityKey: identityKey || null,
-  verified: error === null
-})
+  err?: unknown
+): VerificationResult => {
+  const error = getError(err)
+  return {
+    data: data || null,
+    error,
+    identityKey: identityKey || null,
+    verified: error === null
+  }
+}
 
 export const createErrorResult = (
   error: unknown,
