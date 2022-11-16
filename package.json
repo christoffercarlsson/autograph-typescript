@@ -45,6 +45,7 @@
     "build": "rimraf dist && tsc",
     "format": "prettier --loglevel silent --write .",
     "lint": "eslint .",
+    "prepack": "npm run build",
     "test": "npm run build && rimraf coverage && NODE_OPTIONS='--experimental-vm-modules --no-warnings' npx jest --no-cache"
   },
   "sideEffects": false,
