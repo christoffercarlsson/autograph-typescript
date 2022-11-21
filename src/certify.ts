@@ -1,4 +1,4 @@
-import { concat, createFrom } from 'stedy/bytes'
+import { Chunk, concat, createFrom } from 'stedy/bytes'
 import { authenticate } from './authenticate'
 import { CONTEXT_INITIATOR, CONTEXT_RESPONDER } from './constants'
 import { DiffieHellmanFunction } from './create-diffie-hellman'
@@ -11,7 +11,7 @@ import {
 } from './verify'
 
 export type CertificationResult = VerificationResult & {
-  authentication?: Uint8Array
+  authentication?: Chunk
 }
 
 export type CertifyFunction = (
@@ -22,9 +22,9 @@ export type CertifyFunction = (
 ) => Promise<CertificationResult>
 
 const createResult = (
-  identityKey: Uint8Array,
-  data: Uint8Array,
-  authentication?: Uint8Array,
+  identityKey: Chunk,
+  data: Chunk,
+  authentication?: Chunk,
   error?: Error
 ): CertificationResult => {
   const result = createVerificationResult(identityKey, data, error)
@@ -34,11 +34,8 @@ const createResult = (
   }
 }
 
-const createErrorResult = (
-  error: Error,
-  identityKey?: Uint8Array,
-  data?: Uint8Array
-) => createResult(identityKey, data, null, error)
+const createErrorResult = (error: Error, identityKey?: Chunk, data?: Chunk) =>
+  createResult(identityKey, data, null, error)
 
 export const certify = async (
   sign: SignFunction,

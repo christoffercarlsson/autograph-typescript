@@ -1,4 +1,4 @@
-import { concat, createFrom, split } from 'stedy/bytes'
+import { Chunk, concat, createFrom } from 'stedy/bytes'
 import { SAFETY_NUMBER_DIVISOR, SAFETY_NUMBER_ITERATIONS } from './constants'
 import hash from './crypto/hash'
 import partial from './utils/partial'
@@ -6,9 +6,9 @@ import readKeyShare from './utils/read-key-share'
 
 export type CalculateSafetyNumberFunction = (
   theirKeyShare: BufferSource
-) => Promise<Uint8Array>
+) => Promise<Chunk>
 
-const encodeChunk = (chunk: Uint8Array) => {
+const encodeChunk = (chunk: Chunk) => {
   const [a, b, c, d, e] = chunk
   const number =
     (a * 2 ** 32 + b * 2 ** 24 + c * 2 ** 16 + d * 2 ** 8 + e) %
@@ -25,7 +25,9 @@ const calculate = async (
     concat([createFrom(signPublicKey), createFrom(publicKey)]),
     SAFETY_NUMBER_ITERATIONS
   )
-  return split(digest.subarray(0, 30), 5)
+  return digest
+    .subarray(0, 30)
+    .split(5)
     .map((chunk) => encodeChunk(chunk))
     .join('')
 }

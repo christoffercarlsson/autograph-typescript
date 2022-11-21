@@ -1,11 +1,4 @@
-import {
-  concat,
-  createFrom,
-  equals,
-  read,
-  readUint16BE,
-  split
-} from 'stedy/bytes'
+import { Chunk, concat, createFrom } from 'stedy/bytes'
 import {
   CONTEXT_INITIATOR,
   CONTEXT_RESPONDER,
@@ -20,9 +13,9 @@ import partial from './utils/partial'
 import readKeyShare from './utils/read-key-share'
 
 export type VerificationResult = {
-  data?: Uint8Array
+  data?: Chunk
   error?: Error
-  identityKey?: Uint8Array
+  identityKey?: Chunk
   verified: boolean
 }
 
@@ -32,6 +25,16 @@ export type VerifyOwnershipFunction = (
   theirKeyShare: BufferSource,
   ciphertext: BufferSource
 ) => Promise<VerificationResult>
+
+type TrustParamaterResult = {
+  threshold: number
+  identityKeys: Chunk[]
+}
+
+type TrustedSignatureEntry = {
+  identityKey: Chunk
+  signature: Chunk
+}
 
 /* istanbul ignore next */
 const getError = (error: unknown) => {
@@ -48,8 +51,8 @@ const getError = (error: unknown) => {
 }
 
 export const createResult = (
-  identityKey?: Uint8Array,
-  data?: Uint8Array,
+  identityKey?: Chunk,
+  data?: Chunk,
   err?: unknown
 ): VerificationResult => {
   const error = getError(err)
@@ -63,8 +66,8 @@ export const createResult = (
 
 export const createErrorResult = (
   error: unknown,
-  identityKey: Uint8Array = null,
-  data: Uint8Array = null
+  identityKey: Chunk = null,
+  data: Chunk = null
 ) => createResult(identityKey, data, error)
 
 const readAuthentication = (
@@ -75,11 +78,10 @@ const readAuthentication = (
   const { ephemeralPublicKey: ourEphemeralPublicKey } =
     readKeyShare(ourKeyShare)
   const { signPublicKey: theirIdentityKey } = readKeyShare(theirKeyShare)
-  const [signature, next] = read(createFrom(message), SIGNATURE_SIZE)
-  const [certificate, data] = read(
-    next.subarray(2),
-    readUint16BE(next) * (PUBLIC_KEY_SIZE + SIGNATURE_SIZE)
-  )
+  const [signature, next] = createFrom(message).read(SIGNATURE_SIZE)
+  const [certificate, data] = next
+    .subarray(2)
+    .read(next.readUint16BE() * (PUBLIC_KEY_SIZE + SIGNATURE_SIZE))
   return {
     ourEphemeralPublicKey,
     theirIdentityKey,
@@ -92,18 +94,12 @@ const readAuthentication = (
 const calculateTrustParameters = (
   trustThreshold: number,
   trustedParties: BufferSource,
-  theirIdentityKey: Uint8Array
+  theirIdentityKey: Chunk
 ) => {
-  const identityKeys = split(createFrom(trustedParties), PUBLIC_KEY_SIZE)
+  const identityKeys = createFrom(trustedParties).split(PUBLIC_KEY_SIZE)
   return identityKeys.reduce(
-    (
-      result: {
-        threshold: number
-        identityKeys: Uint8Array[]
-      },
-      identityKey
-    ) => {
-      if (equals(identityKey, theirIdentityKey)) {
+    (result: TrustParamaterResult, identityKey) => {
+      if (identityKey.equals(theirIdentityKey)) {
         return { ...result, threshold: Math.max(result.threshold - 1, 0) }
       }
       return { ...result, identityKeys: [...result.identityKeys, identityKey] }
@@ -118,25 +114,15 @@ const calculateTrustParameters = (
   )
 }
 
-const isTrustedParty = (identityKeys: Uint8Array[], identityKey: Uint8Array) =>
-  identityKeys.length > 0 &&
-  identityKeys.some((key) => equals(key, identityKey))
+const isTrustedParty = (identityKeys: Chunk[], identityKey: Chunk) =>
+  identityKeys.length > 0 && identityKeys.some((key) => key.equals(identityKey))
 
-const findTrustedSignatures = (
-  identityKeys: Uint8Array[],
-  certificate: Uint8Array
-) => {
-  const entries = split(certificate, PUBLIC_KEY_SIZE + SIGNATURE_SIZE).map(
-    (entry) => read(entry, PUBLIC_KEY_SIZE)
-  )
+const findTrustedSignatures = (identityKeys: Chunk[], certificate: Chunk) => {
+  const entries = certificate
+    .split(PUBLIC_KEY_SIZE + SIGNATURE_SIZE)
+    .map((entry) => entry.read(PUBLIC_KEY_SIZE))
   return entries.reduce(
-    (
-      trustedEntries: {
-        identityKey: Uint8Array
-        signature: Uint8Array
-      }[],
-      [identityKey, signature]
-    ) => {
+    (trustedEntries: TrustedSignatureEntry[], [identityKey, signature]) => {
       if (isTrustedParty(identityKeys, identityKey)) {
         return [...trustedEntries, { identityKey, signature }]
       }
@@ -149,9 +135,9 @@ const findTrustedSignatures = (
 const verifyTrust = async (
   trustThreshold: number,
   trustedParties: BufferSource,
-  theirIdentityKey: Uint8Array,
-  certificate: Uint8Array,
-  theirData: Uint8Array
+  theirIdentityKey: Chunk,
+  certificate: Chunk,
+  theirData: Chunk
 ) => {
   const { threshold, identityKeys } = calculateTrustParameters(
     trustThreshold,
@@ -174,8 +160,8 @@ const verifyTrust = async (
 const verifyResult = (
   signatureVerified: boolean,
   trustVerified: boolean,
-  theirIdentityKey: Uint8Array,
-  data: Uint8Array
+  theirIdentityKey: Chunk,
+  data: Chunk
 ) => {
   if (!signatureVerified) {
     return createErrorResult(

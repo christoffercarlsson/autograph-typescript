@@ -1,4 +1,4 @@
-import { alloc, append, concat, createFrom, writeUint16BE } from 'stedy/bytes'
+import { alloc, Chunk, concat, createFrom } from 'stedy/bytes'
 import { CONTEXT_INITIATOR, PUBLIC_KEY_SIZE, SIGNATURE_SIZE } from './constants'
 import type { DiffieHellmanFunction } from './create-diffie-hellman'
 import type { SignFunction } from './create-sign'
@@ -10,22 +10,21 @@ import readKeyShare from './utils/read-key-share'
 export type IdentifyFunction = (
   ourEphemeralPrivateKey: BufferSource,
   theirKeyShare: BufferSource
-) => Promise<Uint8Array>
+) => Promise<Chunk>
 
 export type ProveFunction = (
   ourData: BufferSource,
   ourCertificate: BufferSource,
   ourEphemeralPrivateKey: BufferSource,
   theirKeyShare: BufferSource
-) => Promise<Uint8Array>
+) => Promise<Chunk>
 
-const createCertificate = (certificate: Uint8Array) => {
+const createCertificate = (certificate: Chunk) => {
   const entrySize = PUBLIC_KEY_SIZE + SIGNATURE_SIZE
   const entries = Math.min(certificate.byteLength / entrySize, 65535)
-  return append(
-    writeUint16BE(alloc(2), entries),
-    certificate.subarray(0, entrySize * entries)
-  )
+  return alloc(2)
+    .writeUint16BE(entries)
+    .append(certificate.subarray(0, entrySize * entries))
 }
 
 const createMessage = async (

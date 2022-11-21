@@ -1,22 +1,22 @@
-import { createFrom, concat } from 'stedy/bytes'
 import {
   exportKey,
   generateKeyPair as generateKeys,
   generateSignKeyPair as generateSignKeys
 } from 'stedy'
+import { createFrom, concat, Chunk } from 'stedy/bytes'
 import partial from './utils/partial'
 
 export type KeyPair = {
-  publicKey: Uint8Array
-  privateKey: Uint8Array
+  publicKey: Chunk
+  privateKey: Chunk
 }
 
 export type KeyShare = {
-  keyShare: Uint8Array
-  privateKey: Uint8Array
+  ourKeyShare: Chunk
+  ourEphemeralPrivateKey: Chunk
 }
 
-export type KeyShareFunction = () => Promise<KeyShare>
+export type GenerateKeyShareFunction = () => Promise<KeyShare>
 
 const exportKeyPair = async ({
   publicKey,
@@ -35,17 +35,25 @@ export const generateKeyShare = async (
   ourSignPublicKey: BufferSource,
   ourPublicKey: BufferSource
 ): Promise<KeyShare> => {
-  const { publicKey, privateKey } = await generateKeyPair()
-  const keyShare = concat([
+  const { publicKey, privateKey: ourEphemeralPrivateKey } =
+    await generateKeyPair()
+  const ourKeyShare = concat([
     createFrom(ourSignPublicKey),
     createFrom(ourPublicKey),
     publicKey
   ])
-  return { keyShare, privateKey }
+  return {
+    ourKeyShare,
+    ourEphemeralPrivateKey
+  }
 }
 
 export const createGenerateKeyShare = (
   ourSignPublicKey: BufferSource,
   ourPublicKey: BufferSource
 ) =>
-  partial(generateKeyShare, ourSignPublicKey, ourPublicKey) as KeyShareFunction
+  partial(
+    generateKeyShare,
+    ourSignPublicKey,
+    ourPublicKey
+  ) as GenerateKeyShareFunction

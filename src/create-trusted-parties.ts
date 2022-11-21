@@ -1,4 +1,4 @@
-import { concat, createFrom, ENCODING_BASE64_URLSAFE } from 'stedy/bytes'
+import { Chunk, concat, createFrom, ENCODING_BASE64_URLSAFE } from 'stedy/bytes'
 
 type TrustedPartyEntry = string | BufferSource
 
@@ -10,6 +10,6 @@ const createTrustedParties = (
     (trustedParties, identityKey) =>
       concat([createFrom(trustedParties), createFrom(identityKey, encoding)]),
     createFrom()
-  ) as Uint8Array
+  ) as Chunk
 
 export default createTrustedParties

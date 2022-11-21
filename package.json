@@ -7,7 +7,7 @@
     "url": "https://github.com/christoffercarlsson/autograph-typescript/issues"
   },
   "dependencies": {
-    "stedy": "^0.12.2"
+    "stedy": "^0.16.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",

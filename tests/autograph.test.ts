@@ -1,17 +1,17 @@
-import { concat, createFrom } from 'stedy/bytes'
+import { Chunk, concat, createFrom } from 'stedy/bytes'
 import {
+  Alice,
+  Bob,
+  Charlie,
+  DiffieHellmanFunction,
+  SignFunction,
   createDiffieHellman,
   createSign,
-  generateKeyPair,
-  generateSignKeyPair,
   createAlice,
   createBob,
   createCharlie,
-  Bob,
-  Alice,
-  Charlie,
-  DiffieHellmanFunction,
-  SignFunction
+  generateKeyPair,
+  generateSignKeyPair
 } from '../src'
 
 type BobExtended = Bob & {
@@ -25,9 +25,9 @@ type CharlieExtended = Charlie & {
 
 type Identity = {
   diffieHellman: DiffieHellmanFunction
-  publicKey: Uint8Array
+  publicKey: Chunk
   sign: SignFunction
-  signPublicKey: Uint8Array
+  signPublicKey: Chunk
 }
 
 const generateIdentity = async (): Promise<Identity> => {
@@ -93,7 +93,7 @@ const generateCharlie = async (): Promise<CharlieExtended> => {
 const generateCertificate = async (
   charlie: CharlieExtended,
   alice: Alice,
-  data: Uint8Array
+  data: Chunk
 ) => {
   const signature = await charlie.sign(concat([data, alice.signPublicKey]))
   return concat([charlie.signPublicKey, signature])
@@ -104,7 +104,7 @@ describe('Protocol implementation', () => {
   let alice: Alice,
     bob: BobExtended,
     charlie: CharlieExtended,
-    certificate: Uint8Array
+    certificate: Chunk
   beforeEach(async () => {
     alice = await generateAlice()
     bob = await generateBob()
@@ -113,11 +113,13 @@ describe('Protocol implementation', () => {
   })
 
   it('should allow Bob and Charlie to establish trust', async () => {
-    const { keyShare: bobKeyShare, privateKey: bobEphemeralPrivateKey } =
-      await bob.generateKeyShare()
     const {
-      keyShare: charlieKeyShare,
-      privateKey: charlieEphemeralPrivateKey
+      ourKeyShare: bobKeyShare,
+      ourEphemeralPrivateKey: bobEphemeralPrivateKey
+    } = await bob.generateKeyShare()
+    const {
+      ourKeyShare: charlieKeyShare,
+      ourEphemeralPrivateKey: charlieEphemeralPrivateKey
     } = await charlie.generateKeyShare()
     const bobCiphertext = await bob.identify(
       bobEphemeralPrivateKey,
@@ -150,11 +152,13 @@ describe('Protocol implementation', () => {
   })
 
   it("should allow Charlie to certify Alice's ownership of her identity key and data", async () => {
-    const { keyShare: aliceKeyShare, privateKey: aliceEphemeralPrivateKey } =
-      await alice.generateKeyShare()
     const {
-      keyShare: charlieKeyShare,
-      privateKey: charlieEphemeralPrivateKey
+      ourKeyShare: aliceKeyShare,
+      ourEphemeralPrivateKey: aliceEphemeralPrivateKey
+    } = await alice.generateKeyShare()
+    const {
+      ourKeyShare: charlieKeyShare,
+      ourEphemeralPrivateKey: charlieEphemeralPrivateKey
     } = await charlie.generateKeyShare()
     const ciphertext = await alice.prove(
       data,
@@ -191,10 +195,14 @@ describe('Protocol implementation', () => {
       charlie.signPublicKey,
       1
     )
-    const { keyShare: aliceKeyShare, privateKey: aliceEphemeralPrivateKey } =
-      await alice.generateKeyShare()
-    const { keyShare: bobKeyShare, privateKey: bobEphemeralPrivateKey } =
-      await bobWithCharlie.generateKeyShare()
+    const {
+      ourKeyShare: aliceKeyShare,
+      ourEphemeralPrivateKey: aliceEphemeralPrivateKey
+    } = await alice.generateKeyShare()
+    const {
+      ourKeyShare: bobKeyShare,
+      ourEphemeralPrivateKey: bobEphemeralPrivateKey
+    } = await bobWithCharlie.generateKeyShare()
     const ciphertext = await alice.prove(
       data,
       certificate,
